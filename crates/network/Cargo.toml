@@ -33,7 +33,7 @@ raknet-tokio = { git = "https://github.com/bedrock-crustaceans/raknet.git" }
 # constant, its reassembler overflowed on the legal maximum segment counter, and its
 # `Session` could only be built from an `RTCPeerConnection` — whose `create_answer`
 # does not produce a description vanilla Bedrock accepts.
-nethernet = { git = "https://github.com/lukasbraach/nethernet", rev = "3d96cfd55166e3795c102cca463701afb83cf124", optional = true }
+nethernet = { git = "https://github.com/lukasbraach/nethernet", rev = "0799907f357ec1d72bdd4767d21956488848d592", optional = true }
 bytes = { version = "1", optional = true }
 
 [features]
