@@ -22,3 +22,20 @@ ctr = "0.10.0-rc.4"
 
 raknet-tokio = { git = "https://github.com/bedrock-crustaceans/raknet.git" }
 
+# The NetherNet transport (Bedrock over a WebRTC data channel), optional because it
+# pulls in `webrtc`: roughly 1.6 MB of dependencies, and `webrtc-util` enumerates
+# interfaces through `nix::ifaddrs`, which raises the Android minimum to API 24.
+# A RakNet-only consumer should pay for none of that.
+#
+# Points at a fork for four commits upstream does not have yet: upstream `main` does
+# not compile (a dependabot bump to aes 0.9 / hmac 0.13 landed unreviewed), its
+# MAX_MESSAGE_SIZE was go-nethernet's stale doc-comment value rather than its
+# constant, its reassembler overflowed on the legal maximum segment counter, and its
+# `Session` could only be built from an `RTCPeerConnection` — whose `create_answer`
+# does not produce a description vanilla Bedrock accepts.
+nethernet = { git = "https://github.com/lukasbraach/nethernet", rev = "3d96cfd55166e3795c102cca463701afb83cf124", optional = true }
+bytes = { version = "1", optional = true }
+
+[features]
+nethernet = ["dep:nethernet", "dep:bytes"]
+

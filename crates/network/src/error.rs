@@ -36,8 +36,29 @@ pub enum TransportLayerError {
     IOError(#[from] IOError),
     #[error("RakNet Error: {0}")]
     RakNetError(#[from] RakNetError),
+    #[cfg(feature = "nethernet")]
+    #[error("NetherNet Error: {0}")]
+    NetherNetError(#[from] NetherNetError),
+    /// The data channel closed cleanly, which `Session::recv` reports as `None`
+    /// rather than as an error. Distinguished from [`Self::NetherNetError`] because a
+    /// console leaving is ordinary and a framing fault is not.
+    #[cfg(feature = "nethernet")]
+    #[error("NetherNet connection closed")]
+    NetherNetClosed,
     // #[error("Quic Error: {0}")]
     // QuicError(#[from] QuicError),
+}
+
+/// Errors from the NetherNet transport.
+///
+/// A newtype rather than using `nethernet::NethernetError` directly, so that
+/// `TransportLayerError` keeps one variant per transport and the `nethernet`
+/// dependency stays behind the feature gate at every use site.
+#[cfg(feature = "nethernet")]
+#[derive(Error, Debug)]
+pub enum NetherNetError {
+    #[error("Session Error: {0}")]
+    SessionError(#[from] nethernet::NethernetError),
 }
 
 #[derive(Error, Debug)]

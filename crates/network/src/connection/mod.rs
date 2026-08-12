@@ -47,6 +47,11 @@ impl<V: Packets> Connection<V> {
     pub fn get_socket_addr(&self) -> SocketAddr {
         match &self.transport_layer {
             TransportLayerConnection::RakNet(rak) => rak.get_addr(),
+            // The address the session was signalled from. A NetherNet peer has no
+            // single UDP address in the RakNet sense — ICE can renominate a candidate
+            // pair mid-session — so this is for diagnostics, not for dialling back.
+            #[cfg(feature = "nethernet")]
+            TransportLayerConnection::NetherNet(stream) => stream.remote_addr(),
         }
     }
 
