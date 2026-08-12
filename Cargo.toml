@@ -68,6 +68,9 @@ protocol = [
     "dep:bedrock_macros",
 ]
 network = ["dep:bedrock_network", "protocol"]
+# Bedrock over a NetherNet (WebRTC) data channel, in addition to RakNet. Off by
+# default: it costs a `webrtc` dependency tree and an Android minimum of API 24.
+nethernet = ["network", "bedrock_network/nethernet"]
 level = ["dep:bedrock_level"]
 full = ["addon", "level", "network", "protocol", "auth"]
 form = ["dep:bedrock_form"]
