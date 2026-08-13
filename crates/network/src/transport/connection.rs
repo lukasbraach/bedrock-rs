@@ -6,7 +6,17 @@ use std::io::{Cursor, Write};
 
 pub enum TransportLayerConnection {
     RakNet(RakSession),
-    // TODO: NetherNet(nethernet::connection::Connection),
+    /// A NetherNet peer connection: Bedrock over a WebRTC data channel.
+    ///
+    /// This is the transport a Nintendo Switch and a Bedrock client on a phone use
+    /// for LAN play; there is no RakNet path to a Switch at all.
+    ///
+    /// Feature-gated because it pulls in `webrtc`, which is around 1.6 MB of
+    /// dependencies and raises the Android minimum to API 24 (`webrtc-util`
+    /// enumerates interfaces through `nix::ifaddrs`, and Bionic only gained
+    /// `getifaddrs` there). A RakNet-only consumer should not pay for either.
+    #[cfg(feature = "nethernet")]
+    NetherNet(nethernet::NethernetStream),
     // TODO: Quic(s2n_quic::stream::BidirectionalStream),
     // TODO: Tcp(net::TcpStream),
 }
@@ -26,6 +36,13 @@ impl TransportLayerConnection {
                 conn.send(buf, RakReliability::ReliableOrdered, RakPriority::Immediate)
                     .await
                     .map_err(RakNetError::from)?;
+            }
+            // No RAKNET_GAMEPACKET_ID. NetherNet prepends a remaining-segment
+            // counter and nothing else — go-nethernet's `Conn.BatchHeader` returns
+            // nil — and the segmenting happens below this layer, in the stream.
+            #[cfg(feature = "nethernet")]
+            Self::NetherNet(conn) => {
+                conn.send(bytes::Bytes::copy_from_slice(stream)).await?;
             }
         }
 
@@ -53,6 +70,15 @@ impl TransportLayerConnection {
 
                 stream
             }
+            // Deliberately no header read and no drain: the first byte belongs to the
+            // batch. Measured against a Nintendo Switch on Bedrock 26.41, whose first
+            // data-channel batch began `06 c1 01 …` — a varint length, not 0xfe.
+            #[cfg(feature = "nethernet")]
+            Self::NetherNet(conn) => conn
+                .recv()
+                .await?
+                .ok_or(TransportLayerError::NetherNetClosed)?
+                .to_vec(),
         };
 
         Ok(stream)
@@ -63,12 +89,18 @@ impl TransportLayerConnection {
             Self::RakNet(conn) => {
                 let _ = conn.close().await;
             }
+            #[cfg(feature = "nethernet")]
+            Self::NetherNet(conn) => {
+                let _ = conn.close().await;
+            }
         }
     }
 
     pub async fn is_closed(&self) -> bool {
         match self {
             Self::RakNet(conn) => conn.is_closed().await,
+            #[cfg(feature = "nethernet")]
+            Self::NetherNet(conn) => conn.session().is_closed().await,
         }
     }
 }
