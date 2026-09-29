@@ -43,6 +43,7 @@ v1001 = []
 v2168 = []
 v2169 = []
 v2193 = []
+v2216 = []
 all = [
     "unknown",
     "v662",
@@ -68,7 +69,8 @@ all = [
     "v1001",
     "v2168",
     "v2169",
-    "v2193"
+    "v2193",
+    "v2216",
 ]
 
 packet-dyn = ["bedrock_protocol_core/packet-dyn"]

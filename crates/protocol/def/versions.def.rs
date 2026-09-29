@@ -920,5 +920,10 @@ versions![
             % ConnectionFailReason: ConnectionFailReason,
             % PersonaPieceType: PersonaPieceType,
         ] in crate::version::v2193::enums,
+    },
+    (2216, "r/26_u6", "1.26.60"): {
+        types: [
+            % LevelSettings: LevelSettings^,
+        ] in crate::version::v2216::types,
     }
 ];

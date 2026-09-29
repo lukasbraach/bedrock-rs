@@ -102,6 +102,7 @@ protocol-v1001 = ["bedrock_protocol/v1001"]
 protocol-v2168 = ["bedrock_protocol/v2168"]
 protocol-v2169 = ["bedrock_protocol/v2169"]
 protocol-v2193 = ["bedrock_protocol/v2193"]
+protocol-v2216 = ["bedrock_protocol/v2216"]
 protocol-all = ["bedrock_protocol/all"]
 
 protocol-packet-dyn = ["bedrock_protocol/packet-dyn"]
