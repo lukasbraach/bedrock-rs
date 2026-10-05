@@ -925,5 +925,6 @@ versions![
         types: [
             % LevelSettings: LevelSettings^,
         ] in crate::version::v2216::types,
-    }
+    },
+    (2223, "r/26_u6", "1.26.60"): {}
 ];
