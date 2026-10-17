@@ -26,6 +26,16 @@ impl TransportLayerListener {
         Ok(())
     }
 
+    /// Every unconnected ping the transport answers, by source address. Call before
+    /// [`Self::start`]; `None` afterwards.
+    pub fn subscribe_pings(
+        &mut self,
+    ) -> Option<tokio::sync::mpsc::UnboundedReceiver<std::net::SocketAddr>> {
+        match self {
+            Self::RakNet(listener) => listener.subscribe_pings(),
+        }
+    }
+
     pub async fn accept(&mut self) -> Result<TransportLayerConnection, TransportLayerError> {
         let conn = match self {
             Self::RakNet(listener) => TransportLayerConnection::RakNet(

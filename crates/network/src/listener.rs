@@ -70,6 +70,17 @@ impl Listener {
         })
     }
 
+    /// Every discovery ping the listener answers, by source address.
+    ///
+    /// A client pings about once a second while its server list is open, so this is
+    /// the signal that a client is browsing rather than in a world. Must be called
+    /// before [`Self::start`]; returns `None` afterwards.
+    pub fn subscribe_pings(
+        &mut self,
+    ) -> Option<tokio::sync::mpsc::UnboundedReceiver<std::net::SocketAddr>> {
+        self.listener.subscribe_pings()
+    }
+
     pub async fn start(&mut self) -> Result<(), ListenerError> {
         self.listener.start().await?;
         Ok(())
