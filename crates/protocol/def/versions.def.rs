@@ -926,5 +926,10 @@ versions![
             % LevelSettings: LevelSettings^,
         ] in crate::version::v2216::types,
     },
-    (2223, "r/26_u6", "1.26.60"): {}
+    (2223, "r/26_u6", "1.26.60"): {},
+    (2225, "r/26_u6", "1.26.60"): {
+        enums: [
+            % ConnectionFailReason: ConnectionFailReason,
+        ] in crate::version::v2225::enums,
+    }
 ];
